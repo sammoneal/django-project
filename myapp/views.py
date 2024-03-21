@@ -1,9 +1,18 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from .default_data import load_default_data
-from .models import Invention
+from .models import Invention, Category
+from .forms import InventionForm
 
 
 # class from which all class based views inherit
@@ -71,6 +80,25 @@ class InventionDetailView(DetailView):
     model = Invention
     template_name = "invention_view.html"
     context_object_name = "invention"
+
+
+class InventionCreateView(LoginRequiredMixin, CreateView):
+    model = Invention
+    form_class = InventionForm
+    template_name = "create_invention.html"
+    success_url = reverse_lazy("invention-list")
+
+
+class InventionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Invention
+    form_class = InventionForm
+    template_name = "update_invention.html"
+    success_url = reverse_lazy("invention-list")
+
+
+class InventionDeleteView(LoginRequiredMixin, DeleteView):
+    model = Invention
+    success_url = reverse_lazy("invention-list")
 
 
 def about(request):
